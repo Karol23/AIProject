@@ -8,9 +8,22 @@
 
 #include "Net.h"
 
+#include <curl/curl.h>
 
 int main()
 {
+	// CURL Test
+	CURL *curl;
+	CURLcode res;
+	curl = curl_easy_init();
+	if (curl) {
+		curl_easy_setopt(curl, CURLOPT_URL, "http://www.google.co.uk/");
+		res = curl_easy_perform(curl);
+
+		curl_easy_cleanup(curl);
+	}
+	// END OF TEST
+
 	std::vector<unsigned> topology;
 
 	topology.push_back(3);
