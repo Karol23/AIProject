@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 
-class Neuron {};
+#include "Neuron.h"
 
 typedef std::vector<Neuron> Layer;
 
