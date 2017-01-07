@@ -14,7 +14,7 @@ Net::Net(const std::vector<unsigned> &topology)
 		//Loop will go +1 for bias neuron
 		for (auto neuronNum = 0; neuronNum <= topology[layerNum]; ++neuronNum)
 		{
-			m_layers.back().push_back(Neuron(numOutputs));
+			m_layers.back().push_back(Neuron(numOutputs, neuronNum));
 			std::cout << "Made a Neuron!" << std::endl;
 		}
 	}
