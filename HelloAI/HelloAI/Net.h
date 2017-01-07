@@ -19,5 +19,8 @@ public:
 
 private:
 	std::vector<Layer> m_layers; // m_layers[layerNum][pneuronNum]
+	double m_error;
+	double m_recentAverageError;
+	double m_recentAverageSmoothingFactor;
 };
 

@@ -12,6 +12,7 @@
 
 int main()
 {
+	/*
 	// CURL Test
 	CURL *curl;
 	CURLcode res;
@@ -23,7 +24,7 @@ int main()
 		curl_easy_cleanup(curl);
 	}
 	// END OF TEST
-
+	*/
 	std::vector<unsigned> topology;
 
 	topology.push_back(3);

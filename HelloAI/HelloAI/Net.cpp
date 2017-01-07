@@ -17,6 +17,9 @@ Net::Net(const std::vector<unsigned> &topology)
 			m_layers.back().push_back(Neuron(numOutputs, neuronNum));
 			std::cout << "Made a Neuron!" << std::endl;
 		}
+
+		// Force the bias node's output value to 1.0. It's the last neuron created above
+		m_layers.back().back().setOutputVal(1.0);
 	}
 }
 
@@ -42,11 +45,62 @@ void Net::feedForward(const std::vector<double> &inputVals)
 }
 
 void Net::backProp(const std::vector<double> &targetVals)
+
 {
+	// Claculate overall net error RMS
+
+	Layer &outputLayer = m_layers.back();
+	m_error = 0.0;
+
+	for (unsigned n = 0; n < outputLayer.size() - 1; ++n)
+	{
+		double delta = targetVals[n] - outputLayer[n].getOutputVal();
+		m_error += delta * delta;
+ 	}
+	m_error /= outputLayer.size() - 1;
+	m_error = sqrt(m_error);
+
+	// Implement a recent average mesurment:
+	m_recentAverageError = (m_recentAverageError * m_recentAverageSmoothingFactor + m_error) / (m_recentAverageSmoothingFactor + 1.0);
+
+	// Calculate output layer gradients
+	for (unsigned n = 0; n < outputLayer.size() - 1; ++n)
+	{
+		outputLayer[n].calcOutputGradients(targetVals[n]);
+	}
+
+	// Calculate gradients on hidden layers
+	for(unsigned layerNum = m_layers.size() - 2; layerNum > 0; --layerNum)
+	{
+		Layer &hiddenLayer = m_layers[layerNum];
+		Layer &nextLayer = m_layers[layerNum + 1];
+
+		for (unsigned n = 0; n < hiddenLayer.size(); ++n)
+		{
+			hiddenLayer[n].calcHiddenGradients(nextLayer);
+		}
+	}
+	// For all layers from outputs to first hidden layer, update conncection weights
+	for (unsigned layerNum = m_layers.size() - 1; layerNum > 0; --layerNum)
+	{
+		Layer &layer = m_layers[layerNum];
+		Layer &prevLayer = m_layers[layerNum - 1];
+
+		for (unsigned n = 0; n < layer.size() - 1; ++n)
+		{
+			layer[n].updateInputWeight(prevLayer);
+		}
+	}
 }
 
 void Net::getResults(std::vector<double> &resultVals) const
 {
+	resultVals.clear();
+
+	for (unsigned n = 0; n < m_layers.back().size() - 1; ++n)
+	{
+		resultVals.push_back(m_layers.back()[n].getOutputVal());
+	}
 }
 
 Net::~Net()
