@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "Net.h"
+#include "TrainingData.h"
 
 #include <curl/curl.h>
 
@@ -25,22 +26,49 @@ int main()
 	}
 	// END OF TEST
 	*/
-	std::vector<unsigned> topology;
 
-	topology.push_back(3);
-	topology.push_back(2);
-	topology.push_back(1);
+	TrainingData trainData("/tmp/trainingData.txt");
+
+	// e.g., { 3, 2, 1 }
+	std::vector<unsigned> topology;
+	trainData.getTopology(topology);
 
 	Net myNet(topology);
 
-	std::vector<double> inputVals;
-	myNet.feedForward(inputVals);
+	std::vector<double> inputVals, targetVals, resultVals;
+	int trainingPass = 0;
 
-	std::vector<double> targetVals;
-	myNet.backProp(targetVals);
+	while (!trainData.isEof()) {
+		++trainingPass;
+		std::cout << std::endl << "Pass " << trainingPass;
 
-	std::vector<double> resultVals;
-	myNet.getResults(resultVals);
+		// Get new input data and feed it forward:
+		if (trainData.getNextInputs(inputVals) != topology[0]) {
+			break;
+		}
+		//showVectorVals(": Inputs:", inputVals);
+		myNet.feedForward(inputVals);
+
+		// Collect the net's actual output results:
+		myNet.getResults(resultVals);
+		//TODO fix this
+		//showVectorVals("Outputs:", resultVals);
+
+		// Train the net what the outputs should have been:
+		trainData.getTargetOutputs(targetVals);
+		//TODO fix this
+		//showVectorVals("Targets:", targetVals);
+		assert(targetVals.size() == topology.back());
+
+		myNet.backProp(targetVals);
+
+		// Report how well the training is working, average over recent samples:
+		//TODO fix this
+		//::cout << "Net recent average error: "
+		//	<< myNet.getRecentAverageError() << endl;
+	}
+
+	std::cout << std::endl << "Done" << std::endl;
 
     return 0;
 }
