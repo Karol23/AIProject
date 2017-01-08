@@ -5,11 +5,22 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 
 #include "Net.h"
 #include "TrainingData.h"
 
 #include <curl/curl.h>
+
+void showVectorVals(std::string label, std::vector<double> &v)
+{
+	std::cout << label << " ";
+	for (unsigned i = 0; i < v.size(); ++i) {
+		std::cout << v[i] << " ";
+	}
+
+	std::cout << std::endl;
+}
 
 int main()
 {

@@ -15,6 +15,9 @@ public:
 	void feedForward(const std::vector<double> &inputVals);
 	void backProp(const std::vector<double> &targetVals);
 	void getResults(std::vector<double> &resultVals) const;
+	//TODO
+	//Move this to cpp file with inline annotation
+	double getRecentAverageError(void) const { return m_recentAverageError; }
 	~Net();
 
 private:
